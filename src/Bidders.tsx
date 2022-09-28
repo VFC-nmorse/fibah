@@ -22,6 +22,8 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
         }
     }
 
+    const activeFibber = (lastUpdated: string | null) => (Date.parse(lastUpdated ?? "") > Date.now() - 1000 * 35 )
+
     const [{ data: rtBids, error: bidError }] = useRealtime('fibbers', {
         select: {
             columns: 'id,updated_at,name,bid',
@@ -56,24 +58,23 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                                         <span className="badge-person2">{p.name}</span> My Bid
                                         <BidUpdate table={"fibbers"} id={p.id} initBid={p.bid} /></>
                                         :
-                                        Date.parse(p?.updated_at ?? "") > Date.now() -  60 * 35 ? // 35 seconds
+                                        activeFibber(p.updated_at) ? // 35 seconds
                                             <span className="badge-person1">{p.name}</span> :
                                             <span className="badge-person0">{p.name}</span>
-
                                 }
                             </li>
                         )) : null}
                 </ul>
             </div>
             <div>
-                <ul className="list-group slim">{
-                    rtBids.map((p: { id: string, name: string, bid: number }) => (
+                <ul className="list-group slim"> {
+                    rtBids.map((p: { id: string, name: string, bid: number, updated_at: string }) => (
                         <li key={p.id}>
                             {biddingTicket ?
-                                <span className="badge0">{p.bid ? "#" : "?"}</span> : null
+                                (activeFibber(p.updated_at) ? <span className="badge0">{p.bid ? "#" : "?"}</span> : <span className="badge-person0">-</span>) : null
                             }
                             {debateTicket ?
-                                <span className={`badge${p.bid ?? 0}`}>{p.bid ?? "😥"}</span> : null
+                                (activeFibber(p.updated_at) ? <span className={`badge${p.bid ?? 0}`}>{p.bid ?? "😥"}</span> : <span className="badge-person0">-</span>) : null
                             }
                         </li>
                     ))}

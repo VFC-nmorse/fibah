@@ -4,20 +4,24 @@ import { supabase } from "./supabaseClient";
 
 export const NameUpdate = ({initName, user}: {initName: string, user: User}) => {
     const [name, setName] = useState(initName);
+    const [toast, setToast] = useState("");
     const id = user.id
     async function updateName(e: any) {
         e.preventDefault();
-        // setLoading(true);
-        console.log("handle Update (name, id)", name, id);
         const { data, error } = await supabase.from('fibbers').update({ name }).eq('id', id);
-        console.log("handled Update (name, data, error)", name, data, error);
-        // setLoading(false);
+        if (error) {
+            setToast(error.message);
+        }
+        else {
+            setToast("");
+        }
     }
 
     return (<form onSubmit={updateName} className="form-widget" id="update-profile">
-        <div>Email: {user.email}</div>
+        <span className="badge-person2">{name}</span>
+        <div>{user.email}</div>
         <div>
-            <label htmlFor="name">Name</label>
+            <label htmlFor="name"></label>
             <input
                 id="name"
                 type="text"
@@ -25,9 +29,10 @@ export const NameUpdate = ({initName, user}: {initName: string, user: User}) => 
                 onChange={(e) => setName(e.target.value)}
             />
         </div>
+        <span className="badge8" >{toast}</span>
         <div>
             <button className="button primary block" type="submit" >
-                Profile Name
+                Update My Profile
             </button>
         </div>
     </form>);

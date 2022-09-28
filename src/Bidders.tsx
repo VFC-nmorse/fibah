@@ -11,7 +11,7 @@ import { NewTicket } from './NewTicket';
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
 
     useEffect(() => {
-        const nIntervId = setInterval(pingFibbers, 20000);
+        const nIntervId = setInterval(pingFibbers, 30000);
         pingFibbers();
         return () => { clearInterval(nIntervId); }
     }, [])
@@ -40,21 +40,23 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     const biddingTicket: boolean = rtTickets?.filter((t) => (t.status === 'BIDDING')).length === 1
     const debateTicket: boolean = rtTickets?.filter((t) => (t.status === 'DEBATE')).length === 1
 
+    console.log("rtBids", rtBids)
+
     return (
         <div className="container">
             <div>
-                <ul className="list-group">
+                <ul className="list-group narrow">
                     {
                         rtBids ? rtBids.map((p: {
-                            updated_at: number; id: string, name: string, bid: number
+                            updated_at: string; id: string, name: string, bid: number
                         }) => (
                             <li key={p.id}>
                                 {
                                     user?.id === p.id ? <>
-                                        <span className="badge-person2">{p.name}</span>
+                                        <span className="badge-person2">{p.name}</span> My Bid
                                         <BidUpdate table={"fibbers"} id={p.id} initBid={p.bid} /></>
                                         :
-                                        p.updated_at > Date.now() - 1000 * 60 * 10 ?
+                                        Date.parse(p?.updated_at ?? "") > Date.now() -  60 * 35 ? // 35 seconds
                                             <span className="badge-person1">{p.name}</span> :
                                             <span className="badge-person0">{p.name}</span>
 

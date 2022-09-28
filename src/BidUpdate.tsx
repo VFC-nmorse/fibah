@@ -2,25 +2,23 @@ import React from 'react';
 import { useState } from 'react';
 import { supabase } from './supabaseClient';
 
-export default function BidUpdate({ id, initBid }: { id:string, initBid:number }) {
+export default function BidUpdate({ id, initBid, table }: { id:string, initBid:number, table: string }) {
   const [loading, setLoading] = useState(false);
-  const [bid, setBid] = useState(initBid);
 
-  async function handleUpdate(e:any) {
+  async function handleUpdate(e:any, bid: number) {
       e.preventDefault();
     setLoading(true);
     console.log("handle Update (bid, id)", bid, id);
-    const { data, error } = await supabase.from('fibbers').update({bid}).eq('id', id);
+    const { data, error } = await supabase.from(table).update({bid}).eq('id', id);
     console.log("handled Update (bid, data, error)", bid, data, error);
     setLoading(false);
   }
 
   return (
     <form
-    onSubmit={handleUpdate}
     className="form-widget">
-    <select defaultValue={bid || 0}
-        onChange={(e) => setBid(parseInt(e.target.value, 10) ?? 0)}
+    <select defaultValue={initBid || 0}
+        onChange={(e) => handleUpdate(e, parseInt(e.target.value, 10) ?? 0)}
     >
         <option value={0} key="0" >?</option>
         <option value={1} key="1" >1</option>
@@ -30,9 +28,6 @@ export default function BidUpdate({ id, initBid }: { id:string, initBid:number }
         <option value={8} key="8" >8</option>
         <option value={13} key="13" >13</option>
     </select>
-    <button disabled={loading} className="button primary block" >
-        Send My Bid
-    </button>
 </form>
     );
 }

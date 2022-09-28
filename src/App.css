@@ -46,7 +46,7 @@
   padding: 20px;
   width: 700px;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 2fr 0.1fr 2fr;
   grid-gap: 20px;
 }
 
@@ -65,6 +65,18 @@
   border-radius: .5em;
   width: 20em;
 }
+.list-group {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  border: 1px solid #ccc;
+  border-radius: .5em;
+  width: 20em;
+}
+.slim {
+  width: 3em;
+}
+
 
 .list-group li {
   border-top: 1px solid #ccc;
@@ -78,8 +90,85 @@
   border-top: 0;
 }
 
-.list-group .badge {
-  background-color: rebeccapurple;
+.list-group .badge-person2 {
+  background-color: rgb(199, 199, 24);
+  color: #000;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge-person1 {
+  background-color: rgb(47, 47, 232);
+  color: #fff;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge0 {
+  background-color: #6caf7d;
+  color: #000;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge1 {
+  background-color: #b5d695;
+  color: #000;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge2 {
+  background-color: #fffcb6;
+  color: #000;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge3 {
+  background-color: #f6c379;
+  color: #000;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge5 {
+  background-color: #ea8456;
+  color: #fff;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge8 {
+  background-color: #d43d51;
   color: #fff;
   font-weight: bold;
   font-size: 80%;

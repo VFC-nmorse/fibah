@@ -1,5 +1,6 @@
 {
   "name": "fibah",
+  "description": "Vite, React, Supabase (v1), react-supabase, Netlify",
   "private": true,
   "version": "0.0.0",
   "type": "module",

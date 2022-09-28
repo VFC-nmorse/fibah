@@ -70,7 +70,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                 <ul className="list-group slim"> {
                     rtBids.map((p: { id: string, name: string, bid: number, updated_at: string }) => (
                         <li key={p.id}>
-                            {biddingTicket ?
+                            {biddingTicket || !debateTicket ?
                                 (activeFibber(p.updated_at) ? <span className={`badge${p.bid ? 0 : 8}`}>{p.bid ? "#" : "?"}</span> : <span className="badge-person0">-</span>) : null
                             }
                             {debateTicket ?

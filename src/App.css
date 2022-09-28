@@ -74,7 +74,7 @@
   width: 20em;
 }
 .slim {
-  width: 3em;
+  width: 2.7em;
 }
 
 
@@ -104,6 +104,17 @@
 .list-group .badge-person1 {
   background-color: rgb(47, 47, 232);
   color: #fff;
+  font-weight: bold;
+  font-size: 80%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge-person0 {
+  background-color: rgb(57, 60, 54);
+  color: rgb(40, 50, 31);
   font-weight: bold;
   font-size: 80%;
   border-radius: 10em;

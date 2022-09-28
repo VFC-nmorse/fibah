@@ -1,6 +1,6 @@
-import { useRealtime, useUpdate } from 'react-supabase'
+import { useRealtime } from 'react-supabase'
 import { supabase } from './supabaseClient'
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BidUpdate from './BidUpdate';
 import { User } from '@supabase/supabase-js';
 import TicketStatusUpdate from './TicketStatusUpdate';
@@ -10,9 +10,21 @@ import { NewTicket } from './NewTicket';
 
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
 
+    useEffect(() => {
+        const nIntervId = setInterval(pingFibbers, 20000);
+        pingFibbers();
+        return () => { clearInterval(nIntervId); }
+    }, [])
+
+    const pingFibbers = async () => {
+        if (user?.id) {
+            await supabase.from("fibbers").update({ updated_at: new Date(Date.now()).toISOString() }).eq('id', user?.id);
+        }
+    }
+
     const [{ data: rtBids, error: bidError }] = useRealtime('fibbers', {
         select: {
-            columns: 'id,name,bid',
+            columns: 'id,updated_at,name,bid',
         },
     })
     const person: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)
@@ -33,13 +45,18 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
             <div>
                 <ul className="list-group">
                     {
-                        rtBids ? rtBids.map((p: { id: string, name: string, bid: number }) => (
+                        rtBids ? rtBids.map((p: {
+                            updated_at: number; id: string, name: string, bid: number
+                        }) => (
                             <li key={p.id}>
                                 {
                                     user?.id === p.id ? <>
-                                        <span className="badge-person1">{p.name}</span>
+                                        <span className="badge-person2">{p.name}</span>
                                         <BidUpdate table={"fibbers"} id={p.id} initBid={p.bid} /></>
-                                        : <span className="badge-person2">{p.name}</span>
+                                        :
+                                        p.updated_at > Date.now() - 1000 * 60 * 10 ?
+                                            <span className="badge-person1">{p.name}</span> :
+                                            <span className="badge-person0">{p.name}</span>
 
                                 }
                             </li>
@@ -54,7 +71,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                                 <span className="badge0">{p.bid ? "#" : "?"}</span> : null
                             }
                             {debateTicket ?
-                                <span className={`badge${p.bid}`}>{p.bid}</span> : null
+                                <span className={`badge${p.bid ?? 0}`}>{p.bid ?? "😥"}</span> : null
                             }
                         </li>
                     ))}
@@ -78,7 +95,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                         finishedTickets ? finishedTickets.map((t: { id: string, desc: string, bid: number, status: string }) => (
                             <li key={t.id}>{t.id}
                                 <span className={`badge${t.bid}`}>{t.bid ? t.bid : "?"}</span>
-                                <button disabled={biddingTicket || debateTicket} onClick={() => redebateTicket(t.id)}>redebate</button>
+                                <button disabled={biddingTicket || debateTicket} onClick={() => redebateTicket(t.id)}>re-point</button>
                                 <button onClick={() => deleteTicket(t.id)}>X</button>
                             </li>
                         )) : null}

@@ -5,6 +5,10 @@
   text-align: center;
 }
 
+select, input {
+  font-size: large;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;

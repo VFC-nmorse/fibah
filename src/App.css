@@ -131,7 +131,7 @@ select, input {
 }
 
 .list-group .badge0 {
-  background-color: #6caf7d;
+  background-color: #d43d51;
   color: #000;
   font-weight: bold;
   font-size: 120%;
@@ -198,6 +198,46 @@ select, input {
 
 .list-group .badge13 {
   background-color: #ff37af;
+  color: #000;
+  font-weight: bold;
+  font-size: 120%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+.list-group .badge-2 {
+  background-color: #d2eec4;
+  color: #000;
+  font-weight: bold;
+  font-size: 120%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+.list-group .badge-3 {
+  background-color: #3999ff;
+  color: #000;
+  font-weight: bold;
+  font-size: 120%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+.list-group .badge-4 {
+  background-color: #3999ff;
+  color: #000;
+  font-weight: bold;
+  font-size: 120%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+.list-group .badge-5 {
+  background-color: #3999ff;
   color: #000;
   font-weight: bold;
   font-size: 120%;

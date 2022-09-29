@@ -12,10 +12,9 @@ export default function TicketStatusUpdate({ id, initStatus, canDebate }: { id: 
         if (canDebate || status !== 'DEBATE') {
             const { data, error } = await supabase.from('tickets').update({ status }).eq('id', id);
             if (error) alert(error)
-            // console.log("handled Update (status, data, error)", status, data, error);
         }
         else {
-            setToast(["Cannot DEBATE!", "Some Bids are '?'", "⏳ Try Again 😊"])
+            setToast(["Cannot DEBATE!", "Some Bids are '🤷'", "⏳ Try Again 😊"])
             e.target.value = "BIDDING";
         }
     }

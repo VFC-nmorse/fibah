@@ -16,7 +16,6 @@ export function AuthProvider({ children }: {children:any}) {
   }, [])
 
   useAuthStateChange((event, session) => {
-    console.log(`Supabase auth event: ${event}`, session)
     setState({ session, user: session?.user ?? null })
   })
 

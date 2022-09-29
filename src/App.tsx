@@ -4,8 +4,6 @@ import './App.css';
 import React from 'react';
 import { supabase } from './supabaseClient'
 
-console.log("supabase", supabase);
-
 const App = () => (
   <Provider value={supabase}>
     <AuthRouter />

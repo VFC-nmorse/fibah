@@ -81,7 +81,7 @@ select, input {
   width: 3.25em;
 }
 .narrow {
-  width: 14em;
+  width: 18em;
 }
 
 
@@ -188,6 +188,17 @@ select, input {
 .list-group .badge8 {
   background-color: #d43d51;
   color: #fff;
+  font-weight: bold;
+  font-size: 120%;
+  border-radius: 10em;
+  min-width: 1.5em;
+  padding: .25em;
+  text-align: center
+}
+
+.list-group .badge13 {
+  background-color: #ff37af;
+  color: #000;
   font-weight: bold;
   font-size: 120%;
   border-radius: 10em;

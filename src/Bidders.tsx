@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import BidUpdate from './BidUpdate';
 import { User } from '@supabase/supabase-js';
 import TicketStatusUpdate from './TicketStatusUpdate';
-import { redebateTicket, deleteTicket } from './redebateTicket';
+import { rePointTicket, deleteTicket } from './modifyTicket';
 import { NameUpdate } from './NameUpdate';
 import { NewTicket } from './NewTicket';
 
@@ -22,63 +22,61 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
         }
     }
 
-    const activeFibber = (lastUpdated: string | null) => (Date.parse(lastUpdated ?? "") > Date.now() - 1000 * 35 )
+    const activeFibber = (lastUpdated: string | null) => (Date.parse(lastUpdated ?? "") > Date.now() - 1000 * 35)
 
     const [{ data: rtBids, error: bidError }] = useRealtime('fibbers', {
         select: {
             columns: 'id,updated_at,name,bid',
         },
     })
-    const person: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)
+    const me: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)
+    const fibbersOnline: { id: string, name: string, bid: number }[] | undefined = rtBids?.filter((p) => activeFibber(p.updated_at))
 
     const [{ data: rtTickets, error: ticketError }] = useRealtime('tickets', {
         select: {
             columns: 'id,desc,bid,status',
         },
     })
-    if (!person || !rtBids) return null;
+    if (!me || !rtBids) return null;
     const unfinishedTickets = rtTickets?.filter((t) => t.status !== 'FIN')
     const finishedTickets = rtTickets?.filter((t) => t.status === 'FIN')
     const biddingTicket: boolean = rtTickets?.filter((t) => (t.status === 'BIDDING')).length === 1
     const debateTicket: boolean = rtTickets?.filter((t) => (t.status === 'DEBATE')).length === 1
+    const canDebate = biddingTicket && fibbersOnline?.filter((f) => f.bid === 0).length === 0;
 
-    console.log("rtBids", rtBids)
+    console.log("fibbersOnline", fibbersOnline)
 
     return (
         <div className="container">
-            <div>
-                <ul className="list-group narrow">
-                    {
-                        rtBids ? rtBids.map((p: {
-                            updated_at: string; id: string, name: string, bid: number
-                        }) => (
-                            <li key={p.id}>
-                                {
-                                    user?.id === p.id ? <>
-                                        <span className="badge-person2">{p.name}</span> My Bid
-                                        <BidUpdate table={"fibbers"} id={p.id} initBid={p.bid} /></>
-                                        :
-                                        activeFibber(p.updated_at) ? // 35 seconds
-                                            <span className="badge-person1">{p.name}</span> :
-                                            <span className="badge-person0">{p.name}</span>
-                                }
-                            </li>
-                        )) : null}
-                </ul>
-            </div>
-            <div>
+            <ul className="list-group narrow">
+                {
+                    fibbersOnline ? fibbersOnline.map((p: {
+                         id: string, name: string, bid: number
+                    }) => (
+                        <li key={p.id}>
+                            {
+                                user?.id === p.id ? <>
+                                    <span className="badge-person2">{p.name}</span> My Bid
+                                    <BidUpdate table={"fibbers"} id={p.id} initBid={p.bid} /></>
+                                    :
+                                    <span className="badge-person1">{p.name}</span>
+                            }
+                        </li>
+                    )) : null}
+            </ul>
+
                 <ul className="list-group slim"> {
-                    rtBids.map((p: { id: string, name: string, bid: number, updated_at: string }) => (
+                    fibbersOnline?.map((p: { id: string, name: string, bid: number }) => (
                         <li key={p.id}>
                             {biddingTicket || !debateTicket ?
-                                (activeFibber(p.updated_at) ? <span className={`badge${p.bid ? 0 : 8}`}>{p.bid ? "#" : "?"}</span> : <span className="badge-person0">-</span>) : null
+                                <span className={`badge${p.bid ? 0 : 8}`}>{p.bid ? "#" : "?"}</span> : null
                             }
                             {debateTicket ?
-                                (activeFibber(p.updated_at) ? <span className={`badge${p.bid ?? 0}`}>{p.bid ?? "😥"}</span> : <span className="badge-person0">-</span>) : null
+                                <span className={`badge${p.bid ?? 0}`}>{p.bid ?? "😥"}</span> : null
                             }
                         </li>
                     ))}
-                </ul></div>
+                </ul>
             <div>
                 <ul className="list-group">
                     {
@@ -86,7 +84,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                             <li key={t.id}>{t.id}
                                 <span className={`badge${t.bid}`}>{t.bid ? t.bid : "?"}</span>
                                 {t.status === 'DEBATE' ? <BidUpdate table={"tickets"} id={t.id} initBid={t.bid} /> : null}
-                                <TicketStatusUpdate initStatus={t.status} id={t.id} />
+                                <TicketStatusUpdate initStatus={t.status} id={t.id} canDebate={canDebate} />
                             </li>
                         )) : null}
                 </ul>
@@ -98,7 +96,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                         finishedTickets ? finishedTickets.map((t: { id: string, desc: string, bid: number, status: string }) => (
                             <li key={t.id}>{t.id}
                                 <span className={`badge${t.bid}`}>{t.bid ? t.bid : "?"}</span>
-                                <button disabled={biddingTicket || debateTicket} onClick={() => redebateTicket(t.id)}>re-point</button>
+                                <button disabled={biddingTicket || debateTicket} onClick={() => rePointTicket(t.id)}>re-point</button>
                                 <button onClick={() => deleteTicket(t.id)}>X</button>
                             </li>
                         )) : null}
@@ -108,7 +106,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
 
             <div>
                 {user ?
-                    <NameUpdate initName={person?.name ?? user?.email?.split('@')[0] ?? "blah"} user={user} />
+                    <NameUpdate initName={me?.name ?? user?.email?.split('@')[0] ?? "blah"} user={user} />
                     : null
                 }
             </div>

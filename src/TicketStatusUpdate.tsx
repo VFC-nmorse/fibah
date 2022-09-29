@@ -3,16 +3,21 @@ import React from 'react'
 import { useState } from 'react';
 import { supabase } from './supabaseClient';
 
-export default function TicketStatusUpdate({ id, initStatus }: { id: string, initStatus: string }) {
-    const [loading, setLoading] = useState(false);
+export default function TicketStatusUpdate({ id, initStatus, canDebate }: { id: string, initStatus: string, canDebate: boolean }) {
+    const [toast, setToast] = useState<string[]>([]);
 
     async function handleUpdate(e: any, status: string) {
         e.preventDefault();
-        setLoading(true);
-        console.log("handle Update (status, id)", status, id);
-        const { data, error } = await supabase.from('tickets').update({ status }).eq('id', id);
-        console.log("handled Update (status, data, error)", status, data, error);
-        setLoading(false);
+        setToast([])
+        if (canDebate || status !== 'DEBATE') {
+            const { data, error } = await supabase.from('tickets').update({ status }).eq('id', id);
+            if (error) alert(error)
+            // console.log("handled Update (status, data, error)", status, data, error);
+        }
+        else {
+            setToast(["Cannot DEBATE!", "Some Bids are '?'", "⏳ Try Again 😊"])
+            e.target.value = "BIDDING";
+        }
     }
 
     return (
@@ -25,6 +30,14 @@ export default function TicketStatusUpdate({ id, initStatus }: { id: string, ini
                 <option value={'DEBATE'} key="1" >DEBATE</option>
                 <option value={'FIN'} key="2" >FIN</option>
             </select>
+            {toast.length !== 0 ?
+                <div>
+                <span className="badge5" >{toast[0]}</span><br/>
+                <span className="badge8" >{toast[1]}</span><br/>
+                <span className="badge13" >{toast[2]}</span>
+                </div>
+                : null
+            }
         </form>
     );
 }

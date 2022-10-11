@@ -25,11 +25,11 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
         if (keepAliveId) clearTimeout(keepAliveId)
         setKeepAlive(setTimeout(supabase.auth.signOut, 20 * 60000))
     }
-
+    const aMinuteAgoDate = new Date(new Date(Date.now() - 60000).toUTCString())
     const activeFibber = (lastUpdated: string | null, name: string) => {
         if (!lastUpdated) return false;
         const lastUp = new Date(new Date(Date.parse(lastUpdated ?? "")).toUTCString()).toISOString();
-        const aMinuteAgo = new Date(new Date(Date.now() - 60000).toUTCString()).toISOString();
+        const aMinuteAgo = aMinuteAgoDate.toISOString()
         const isActiveFibber = lastUp > aMinuteAgo;
         console.log(" lastUpdate > aMinuteAgo ", lastUp, ">", aMinuteAgo, "-> isActiveFibber", isActiveFibber, name);
         return isActiveFibber;
@@ -38,6 +38,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     const [{ data: rtBids, error: bidError }] = useRealtime('fibbers', {
         select: {
             columns: 'id,updated_at,name,bid',
+            filter: (query) => query.gt('lastUpdate', aMinuteAgoDate.valueOf()),
         },
     })
     const me: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)

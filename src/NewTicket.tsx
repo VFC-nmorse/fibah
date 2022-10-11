@@ -8,8 +8,8 @@ export const NewTicket = ({ initId, user }: { initId: string, user: User }) => {
         e.preventDefault();
         const { error } = await supabase.from('tickets').insert({ id: tid });
         if (error) alert(error.message)
-        // reset all bids on newTicket
-        const { error: resetError } = await supabase.from('fibbers').update({ bid: 0 }).eq('id', id);
+        // reset your bid on newTicket
+        const { error: resetError } = await supabase.from('fibbers').update({ bid: 0 }).eq('id', user.id);
         if (resetError) alert(resetError.message)
     }
 

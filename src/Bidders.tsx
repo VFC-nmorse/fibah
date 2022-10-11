@@ -1,6 +1,6 @@
 import { useRealtime } from 'react-supabase'
 import { supabase } from './supabaseClient'
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { BidUpdate } from './BidUpdate';
 import { User } from '@supabase/supabase-js';
 import { NameUpdate } from './NameUpdate';
@@ -8,7 +8,7 @@ import { bidToEmoji } from './bidUtils';
 import { Tickets } from './Tickets';
 
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
-
+    const [keepAliveId, setKeepAlive] = useState(setTimeout(supabase.auth.signOut, 20 * 60000))
     useEffect(() => {
         const nIntervId = setInterval(pingFibbers, 30000);
         pingFibbers();
@@ -19,6 +19,11 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
         if (user?.id) { 
             await supabase.from("fibbers").update({ updated_at: new Date(new Date(Date.now()).toUTCString()).toISOString() }).eq('id', user?.id);
         }
+    }
+
+    const renewKeepAlive = () => {
+        if (keepAliveId) clearTimeout(keepAliveId)
+        setKeepAlive(setTimeout(supabase.auth.signOut, 20 * 60000))
     }
 
     const activeFibber = (lastUpdated: string | null, name: string) => {
@@ -60,7 +65,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                             {
                                 user?.id === p.id ? <>
                                     <span className="badge-person2">{p.name}</span> My Bid
-                                    <BidUpdate table={"fibbers"} id={p.id} initBid={p.bid} disabled={debateTicket} /></>
+                                    <BidUpdate table={"fibbers"} id={p.id} initBid={p.bid} disabled={debateTicket} keepAlive={renewKeepAlive} /></>
                                     :
                                     <span className="badge-person1">{p.name}</span>
                             }
@@ -80,7 +85,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                     </li>
                 ))}
             </ul>
-            <Tickets canDebate={canDebate} rtTickets={rtTickets} user={user} biddingTicket={biddingTicket} debateTicket={debateTicket} />
+            <Tickets canDebate={canDebate} rtTickets={rtTickets} user={user} biddingTicket={biddingTicket} debateTicket={debateTicket} keepAlive={renewKeepAlive} />
             <div>
                 {user ?
                     <NameUpdate initName={me?.name ?? user?.email?.split('@')[0] ?? "blah"} user={user} />

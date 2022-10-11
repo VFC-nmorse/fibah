@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { bidToEmoji } from './bidUtils';
 import { supabase } from './supabaseClient';
 
-export const BidUpdate = ({ id, initBid, table, disabled }: { id: string, initBid: number, table: string, disabled: boolean }) => {
+export const BidUpdate = ({ id, initBid, table, disabled, keepAlive }: { id: string, initBid: number, table: string, disabled: boolean, keepAlive: () => void }) => {
 
   async function handleUpdate(e: any, bid: number) {
     e.preventDefault();
     const { data, error } = await supabase.from(table).update({ bid }).eq('id', id);
     if (error) alert(error.message)
+    keepAlive()
   }
 
   return (

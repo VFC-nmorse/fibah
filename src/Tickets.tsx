@@ -6,7 +6,7 @@ import { bidToEmoji } from "./bidUtils";
 import { BidUpdate } from "./BidUpdate";
 import { User } from "@supabase/supabase-js";
 
-export const Tickets = ({ rtTickets, user, biddingTicket, debateTicket, canDebate }: { rtTickets: { id: string, desc: string, bid: number, status: string }[] | null | undefined, user: User | null, biddingTicket: boolean, debateTicket: boolean, canDebate: boolean }) => {
+export const Tickets = ({ rtTickets, user, biddingTicket, debateTicket, canDebate, keepAlive }: { rtTickets: { id: string, desc: string, bid: number, status: string }[] | null | undefined, user: User | null, biddingTicket: boolean, debateTicket: boolean, canDebate: boolean, keepAlive: () => void }) => {
     const unfinishedTickets = rtTickets?.filter((t) => t.status !== 'FIN')
     const finishedTickets = rtTickets?.filter((t) => t.status === 'FIN')
     return <div>
@@ -15,7 +15,7 @@ export const Tickets = ({ rtTickets, user, biddingTicket, debateTicket, canDebat
                 unfinishedTickets ? unfinishedTickets.map((t: { id: string, desc: string, bid: number, status: string }) => (
                     <li key={t.id}>{t.id}
                         <span className={`badge${t.bid}`}>{bidToEmoji(t.bid)}</span>
-                        {t.status === 'DEBATE' ? <BidUpdate table={"tickets"} id={t.id} initBid={t.bid} disabled={false} /> : null}
+                        {t.status === 'DEBATE' ? <BidUpdate table={"tickets"} id={t.id} initBid={t.bid} disabled={false} keepAlive={keepAlive} /> : null}
                         <TicketStatusUpdate initStatus={t.status} id={t.id} canDebate={canDebate} />
                     </li>
                 )) : null}

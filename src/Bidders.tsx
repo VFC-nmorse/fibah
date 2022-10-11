@@ -1,6 +1,6 @@
 import { useRealtime } from 'react-supabase'
 import { supabase } from './supabaseClient'
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { BidUpdate } from './BidUpdate';
 import { User } from '@supabase/supabase-js';
 import { NameUpdate } from './NameUpdate';
@@ -16,12 +16,16 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     }, [])
 
     const pingFibbers = async () => {
-        if (user?.id) {
-            await supabase.from("fibbers").update({ updated_at: new Date(Date.now()).toISOString() }).eq('id', user?.id);
+        if (user?.id) { 
+            await supabase.from("fibbers").update({ updated_at: new Date(new Date(Date.now()).toUTCString()).toISOString() }).eq('id', user?.id);
         }
     }
 
-    const activeFibber = (lastUpdated: string | null) => (Date.parse(lastUpdated ?? "") > Date.now() - 1000 * 35)
+    const activeFibber = (lastUpdated: string | null) => {
+        const isActiveFibber = (Date.parse(lastUpdated ?? "") > Date.now() - 1000 * 35);
+        console.log("isActiveFibber", isActiveFibber, " -- ", Date.parse(lastUpdated ?? ""), ">", Date.now(), "  - 1000 * 35; // 35 seconds");
+        return isActiveFibber;
+    }
 
     const [{ data: rtBids, error: bidError }] = useRealtime('fibbers', {
         select: {

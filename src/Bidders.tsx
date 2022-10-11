@@ -26,7 +26,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
         const lastUp = new Date(new Date(Date.parse(lastUpdated ?? "")).toUTCString()).toISOString();
         const thirtyIshSecondsAgo = new Date(new Date(Date.now() - 1000 * 35).toUTCString()).toISOString();
         const isActiveFibber = lastUp > thirtyIshSecondsAgo;
-        console.log("isActiveFibber", isActiveFibber, name, " lastUpdate > thirtyIshSecondsAgo ", lastUp, ">", thirtyIshSecondsAgo);
+        console.log(" lastUpdate > thirtyIshSecondsAgo ", lastUp, ">", thirtyIshSecondsAgo, "-> isActiveFibber", isActiveFibber, name);
         return isActiveFibber;
     }
 

@@ -22,6 +22,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     }
 
     const activeFibber = (lastUpdated: string | null, name: string) => {
+        if (!lastUpdated) return false;
         const lastUp = new Date(new Date(Date.parse(lastUpdated ?? "")).toUTCString()).toISOString();
         const thirtyIshSecondsAgo = new Date(new Date(Date.now() - 1000 * 35).toUTCString()).toISOString();
         const isActiveFibber = lastUp > thirtyIshSecondsAgo;

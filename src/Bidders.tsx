@@ -21,9 +21,11 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
         }
     }
 
-    const activeFibber = (lastUpdated: string | null) => {
-        const isActiveFibber = (Date.parse(lastUpdated ?? "") > Date.now() - 1000 * 35);
-        console.log("isActiveFibber", isActiveFibber, " -- ", Date.parse(lastUpdated ?? ""), ">", Date.now(), "  - 1000 * 35; // 35 seconds");
+    const activeFibber = (lastUpdated: string | null, name: string) => {
+        const lastUp = new Date(new Date(Date.parse(lastUpdated ?? "")).toUTCString()).toISOString();
+        const thirtyIshSecondsAgo = new Date(new Date(Date.now() - 1000 * 35).toUTCString()).toISOString();
+        const isActiveFibber = lastUp > thirtyIshSecondsAgo;
+        console.log("isActiveFibber", isActiveFibber, name, " lastUpdate > thirtyIshSecondsAgo ", lastUp, ">", thirtyIshSecondsAgo);
         return isActiveFibber;
     }
 
@@ -33,7 +35,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
         },
     })
     const me: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)
-    const fibbersOnline: { id: string, name: string, bid: number }[] | undefined = rtBids?.filter((p) => activeFibber(p.updated_at))
+    const fibbersOnline: { id: string, name: string, bid: number }[] | undefined = rtBids?.filter((p) => activeFibber(p.updated_at, p.name))
 
     const [{ data: rtTickets, error: ticketError }] = useRealtime('tickets', {
         select: {

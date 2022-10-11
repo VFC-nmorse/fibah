@@ -78,7 +78,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
                 fibbersOnline?.map((p: { id: string, name: string, bid: number }) => (
                     <li key={p.id}>
                         {biddingTicket || !debateTicket ?
-                            <span className={`badge${p.bid ? 1 : 8}`}>{p.bid ? "#" : "🤷"}</span> : null // ✨🃏
+                            <span className={`badge${p.bid ? 1 : 8}`}>{p.bid ? "#" : "🤷🏻"}</span> : null // ✨🃏
                         }
                         {debateTicket ?
                             <span className={`badge${p.bid ?? 0}`}>{bidToEmoji(p.bid) ?? "😥"}</span> : null

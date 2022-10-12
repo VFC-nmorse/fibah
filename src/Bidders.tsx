@@ -18,7 +18,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
 
     const pingFibbers = async () => {
         const myLocalTime = new Date(new Date(fastestFibahClock).toUTCString()).toISOString()
-        const time = (bestFibahTime > myLocalTime) ? bestFibahTime : myLocalTime
+        const time = (bestFibahTime.localeCompare(myLocalTime) > 0)  ? bestFibahTime : myLocalTime
         if (user?.id) { 
             await supabase.from("fibbers").update({ updated_at: time }).eq('id', user?.id);
         }
@@ -46,11 +46,11 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     })
     const me: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)
     const fibbersOnline: { id: string, name: string, bid: number }[] | undefined = rtBids?.filter((p) => activeFibber(p.updated_at, p.name))
-    const fastestFibahClock: string = rtBids?.reduce((acc, p) => (Date.parse(p.updated_at) > acc) ? p.updated_at : acc, bestFibahTime)
+    const fastestFibahClock: string = rtBids?.reduce((acc, p) => (p.updated_at.localeCompare(acc) > 0) ? p.updated_at : acc, bestFibahTime)
     console.log("fastestFibahClock, bestFibahTime", fastestFibahClock, bestFibahTime);
     
-    if (fastestFibahClock || "" > bestFibahTime) {
-        setBestFibahTime(fastestFibahClock || bestFibahTime)
+    if (fastestFibahClock.localeCompare(bestFibahTime) > 0) {
+        setBestFibahTime(fastestFibahClock)
     }
 
     const [{ data: rtTickets, error: ticketError }] = useRealtime('tickets', {

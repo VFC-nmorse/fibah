@@ -9,7 +9,7 @@ import { Tickets } from './Tickets';
 
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     const [keepAliveId, setKeepAlive] = useState(setTimeout(supabase.auth.signOut, 20 * 60000))
-    const [bestFibahTime, setBestFibahTime] = useState(0)
+    const [bestFibahTime, setBestFibahTime] = useState(new Date(new Date(fastestFibahClock).toUTCString()).toISOString())
     useEffect(() => {
         const nIntervId = setInterval(pingFibbers, 30000);
         pingFibbers();
@@ -17,8 +17,8 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     }, [])
 
     const pingFibbers = async () => {
-        if (fastestFibahClock && user?.id) { 
-            await supabase.from("fibbers").update({ updated_at: new Date(new Date(fastestFibahClock).toUTCString()).toISOString() }).eq('id', user?.id);
+        if (bestFibahTime > new Date(new Date(fastestFibahClock).toUTCString()).toISOString() && user?.id) { 
+            await supabase.from("fibbers").update({ updated_at: bestFibahTime }).eq('id', user?.id);
         }
     }
 
@@ -44,10 +44,10 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     })
     const me: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)
     const fibbersOnline: { id: string, name: string, bid: number }[] | undefined = rtBids?.filter((p) => activeFibber(p.updated_at, p.name))
-    const fastestFibahClock: number = rtBids?.reduce((acc, p) => (Date.parse(p.updated_at) > acc) ? p.updated_at : acc, bestFibahTime)
+    const fastestFibahClock: string = rtBids?.reduce((acc, p) => (Date.parse(p.updated_at) > acc) ? p.updated_at : acc, bestFibahTime)
     console.log("fastestFibahClock, bestFibahTime", fastestFibahClock, bestFibahTime);
     
-    if (fastestFibahClock || 0 > bestFibahTime) {
+    if (fastestFibahClock || "" > bestFibahTime) {
         setBestFibahTime(fastestFibahClock || bestFibahTime)
     }
 

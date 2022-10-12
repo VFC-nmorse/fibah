@@ -44,7 +44,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     })
     const me: { id: string, name: string, bid: number } | null = rtBids?.reduce((acc, p) => (p.id === user?.id) ? p : acc, null)
     const fibbersOnline: { id: string, name: string, bid: number }[] | undefined = rtBids?.filter((p) => activeFibber(p.updated_at, p.name))
-    const fastestFibahClock: number | null = rtBids?.reduce((acc, p) => (p.updated_at > acc) ? p.updated_at : acc, bestFibahTime)
+    const fastestFibahClock: number = rtBids?.reduce((acc, p) => (Date.parse(p.updated_at) > acc) ? p.updated_at : acc, bestFibahTime)
     console.log("fastestFibahClock, bestFibahTime", fastestFibahClock, bestFibahTime);
     
     if (fastestFibahClock || 0 > bestFibahTime) {

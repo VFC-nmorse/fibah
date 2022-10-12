@@ -17,7 +17,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     }, [])
 
     const pingFibbers = async () => {
-        const myLocalTime = new Date(new Date(fastestFibahClock).toUTCString()).toISOString()
+        const myLocalTime = new Date(new Date(Date.now()).toUTCString()).toISOString()
         const time = (bestFibahTime && bestFibahTime.localeCompare(myLocalTime) > 0)  ? bestFibahTime : myLocalTime
         if (user?.id) { 
             await supabase.from("fibbers").update({ updated_at: time }).eq('id', user?.id);

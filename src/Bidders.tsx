@@ -8,7 +8,7 @@ import { bidToEmoji } from './bidUtils';
 import { Tickets } from './Tickets';
 
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
-    const [keepAliveId, setKeepAlive] = useState(setTimeout(supabase.auth.signOut, 20 * 60000))
+    const [keepAliveId, setKeepAlive] = useState(setTimeout(() => supabase.auth.signOut(), 20 * 60000))
     const [bestFibahTime, setBestFibahTime] = useState(new Date(new Date(Date.now()).toUTCString()).toISOString())
     useEffect(() => {
         const nIntervId = setInterval(pingFibbers, 30000);
@@ -26,13 +26,13 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
 
     const renewKeepAlive = () => {
         if (keepAliveId) clearTimeout(keepAliveId)
-        setKeepAlive(setTimeout(supabase.auth.signOut, 20 * 60000))
+        setKeepAlive(setTimeout(() => supabase.auth.signOut(), 20 * 60000))
     }
 
     const activeFibber = (lastUpdated: string | null, name: string) => {
         if (!lastUpdated) return false;
         const lastUp = new Date(new Date(Date.parse(lastUpdated ?? "")).toUTCString()).toISOString();
-        const aMinuteAgo = new Date(new Date(Date.now() - 120000).toUTCString()).toISOString()
+        const aMinuteAgo = new Date(new Date(Date.now() - 60000).toUTCString()).toISOString()
         const isActiveFibber = lastUp > aMinuteAgo;
         console.log(":) lastUpdate > aMinuteAgo ", lastUp, ">", aMinuteAgo, "-> isActiveFibber", isActiveFibber, name);
         return isActiveFibber;

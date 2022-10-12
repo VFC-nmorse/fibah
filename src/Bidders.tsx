@@ -9,7 +9,7 @@ import { Tickets } from './Tickets';
 
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     const [keepAliveId, setKeepAlive] = useState(setTimeout(supabase.auth.signOut, 20 * 60000))
-    const [bestFibahTime, setBestFibahTime] = useState(new Date(new Date(fastestFibahClock).toUTCString()).toISOString())
+    const [bestFibahTime, setBestFibahTime] = useState(new Date(new Date(Date.now()).toUTCString()).toISOString())
     useEffect(() => {
         const nIntervId = setInterval(pingFibbers, 30000);
         pingFibbers();
@@ -17,8 +17,10 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     }, [])
 
     const pingFibbers = async () => {
-        if (bestFibahTime > new Date(new Date(fastestFibahClock).toUTCString()).toISOString() && user?.id) { 
-            await supabase.from("fibbers").update({ updated_at: bestFibahTime }).eq('id', user?.id);
+        const myLocalTime = new Date(new Date(fastestFibahClock).toUTCString()).toISOString()
+        const time = (bestFibahTime > myLocalTime) ? bestFibahTime : myLocalTime
+        if (user?.id) { 
+            await supabase.from("fibbers").update({ updated_at: time }).eq('id', user?.id);
         }
     }
 

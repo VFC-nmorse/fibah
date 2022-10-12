@@ -49,7 +49,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     const fastestFibahClock: string = rtBids?.reduce((acc, p) => (p.updated_at.localeCompare(acc) > 0) ? p.updated_at : acc, bestFibahTime)
     console.log("fastestFibahClock, bestFibahTime", fastestFibahClock, bestFibahTime);
     
-    if (fastestFibahClock.localeCompare(bestFibahTime) > 0) {
+    if (fastestFibahClock && fastestFibahClock.localeCompare(bestFibahTime) > 0) {
         setBestFibahTime(fastestFibahClock)
     }
 

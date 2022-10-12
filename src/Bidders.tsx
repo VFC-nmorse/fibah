@@ -9,7 +9,7 @@ import { Tickets } from './Tickets';
 
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     const [keepAliveId, setKeepAlive] = useState(setTimeout(supabase.auth.signOut, 20 * 60000))
-    const [bestFibahTime, setBestFibahTime] = useState(Date.now())
+    const [bestFibahTime, setBestFibahTime] = useState(0)
     useEffect(() => {
         const nIntervId = setInterval(pingFibbers, 30000);
         pingFibbers();

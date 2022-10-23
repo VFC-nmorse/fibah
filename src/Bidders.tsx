@@ -25,6 +25,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     }
 
     const renewKeepAlive = () => {
+        console.log("keepAliveId", keepAliveId)
         if (keepAliveId) clearTimeout(keepAliveId)
         setKeepAlive(setTimeout(() => supabase.auth.signOut(), 20 * 60000))
     }

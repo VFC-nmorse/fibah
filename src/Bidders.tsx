@@ -8,7 +8,7 @@ import { bidToEmoji } from './bidUtils';
 import { Tickets } from './Tickets';
 
 const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
-    const [keepAliveId, setKeepAlive] = useState(setTimeout(() => supabase.auth.signOut(), 20 * 60000))
+    const [keepAliveId, setKeepAlive] = useState(setTimeout(() => supabase.auth.signOut(), 50 * 60000))
     const [bestFibahTime, setBestFibahTime] = useState(new Date(new Date(Date.now()).toUTCString()).toISOString())
     useEffect(() => {
         const nIntervId = setInterval(pingFibbers, 30000);
@@ -27,7 +27,7 @@ const Bidders = ({ loggedInUser: user }: { loggedInUser: User | null }) => {
     const renewKeepAlive = () => {
         console.log("keepAliveId", keepAliveId)
         if (keepAliveId) clearTimeout(keepAliveId)
-        setKeepAlive(setTimeout(() => supabase.auth.signOut(), 20 * 60000))
+        setKeepAlive(setTimeout(() => supabase.auth.signOut(), 50 * 60000))
     }
 
     const activeFibber = (lastUpdated: string | null, name: string) => {
